@@ -1,0 +1,8 @@
+{
+  "prepare_data": true,
+  "train": true,
+  "convert_models": true,
+  "generate_data_for_val": true,
+  "calc_score_on_val_data": true,
+  "push_best": true
+}
