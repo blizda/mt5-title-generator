@@ -2,6 +2,7 @@ import json
 import re
 import csv
 from transformers import T5Tokenizer
+import click
 
 
 def cleaning_text(str_in):
@@ -27,7 +28,18 @@ def write_to_dataset(json_string, writer, tokenizer, k, max_model_len=1024):
         k += 1
     return k
 
-
+@click.command()
+@click.option('--train_dataset', type=click.Path(exists=True), help='Path to train dataset')
+@click.option('--val_dataset', type=click.Path(exists=True), help='Path to val dataset')
+@click.option('--model_type', default='google/mt5-small')
+@click.option('--epochs', default=10)
+@click.option('--batch_size', default=1)
+@click.option('--wand_projekt', default='mt-t5-ria-news')
+@click.option('--checkpoint_path', type=click.Path(exists=True), default='mt5_chkpnt')
+@click.option('--lr', default=1e-4)
+@click.option('--gpus', default=-1)
+@click.option('--precision', default=32)
+@click.option('--grad_accum_steps', default=32)
 tokenizer = T5Tokenizer.from_pretrained('google/mt5-small')
 train_len = 100000
 val_len = 2000

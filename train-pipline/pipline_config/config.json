@@ -4,5 +4,22 @@
   "convert_models": true,
   "generate_data_for_val": true,
   "calc_score_on_val_data": true,
-  "push_best": true
+  "push_best": true,
+  "train_dataset": "",
+  "val_dataset": "",
+  "model_type": "google/mt5-small",
+  "epochs": 10,
+  "batch_size": 1,
+  "wand_projekt": "mt-t5-ria-news",
+  "checkpoint_path": "mt5_chkpnt",
+  "lr": 1e-4,
+  "gpus": -1,
+  "precision": 32,
+  "grad_accum_steps": 32,
+  "save_orig_torch_path": "mt5_chkpnt_orig_torch",
+  "save_generate_file_path": "",
+  "beam": 2,
+  "device": "cpu",
+  "dataset_to_save_with_score": "",
+  "elmo_path": ""
 }
