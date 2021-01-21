@@ -38,7 +38,7 @@ def write_to_dataset(json_string, writer, tokenizer, k, max_model_len=1024):
 
 def prepare_dataset(train_dataset_save_path, val_dataset_save_path, model_type, train_dataset_len,
                     val_dataset_len, max_model_len):
-    dataset = get_dataset_from_w_b_without_run
+    dataset = get_dataset_from_w_b_without_run()
     dataset = glob.glob(os.path.join(dataset, '*.json'))[0]
     tokenizer = T5Tokenizer.from_pretrained(model_type)
     k = 0
