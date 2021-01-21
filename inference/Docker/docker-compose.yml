@@ -10,6 +10,7 @@ services:
       bash -c "wandb login ${WB_KEY}
       && git clone https://github.com/blizda/mt5-title-generator.git
       && cd mt5-title-generator/inference/
-      && gunicorn -t 210 -b :8080 infer_model:app"
+      && python download_before_start.py
+      && gunicorn -t 60 -b :8080 infer_model:app"
     ports:
       - "8080:8080"
