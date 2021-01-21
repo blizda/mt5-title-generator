@@ -41,8 +41,8 @@ def run_pipline(config_file, prepare_data, train, convert_models, generate_data_
                 lr, gpus, precision, grad_accum_steps, save_orig_torch_path, save_generate_file_path,
                 beam, device, dataset_to_save_with_score):
     if prepare_data:
-        prepare_dataset(train_dataset, val_dataset, model_type, train_dataset_len,
-                        val_dataset_len, max_model_len)
+        prepare_dataset(train_dataset, val_dataset, model_type,
+                        train_dataset_len, val_dataset_len, max_model_len)
     if train:
         train(train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt,
               checkpoint_path, lr, gpus, precision, grad_accum_steps)

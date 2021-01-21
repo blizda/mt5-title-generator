@@ -35,13 +35,7 @@ def write_to_dataset(json_string, writer, tokenizer, k, max_model_len=1024):
         k += 1
     return k
 
-@click.command()
-@click.option('--train_dataset_save_path', type=click.Path(exists=True), help='Path to save train dataset')
-@click.option('--val_dataset_save_path', type=click.Path(exists=True), help='Path save to val dataset')
-@click.option('--model_type', default='google/mt5-small')
-@click.option('--train_dataset_len', default=100000)
-@click.option('--val_dataset_len', default=2000)
-@click.option('--max_model_len', default=1024)
+
 def prepare_dataset(train_dataset_save_path, val_dataset_save_path, model_type, train_dataset_len,
                     val_dataset_len, max_model_len):
     dataset = get_dataset_from_w_b_without_run
@@ -60,3 +54,15 @@ def prepare_dataset(train_dataset_save_path, val_dataset_save_path, model_type, 
                 k = write_to_dataset(it, tsv_val, tokenizer, k, max_model_len=max_model_len)
             else:
                 break
+
+@click.command()
+@click.option('--train_dataset_save_path', type=click.Path(exists=True), help='Path to save train dataset')
+@click.option('--val_dataset_save_path', type=click.Path(exists=True), help='Path save to val dataset')
+@click.option('--model_type', default='google/mt5-small')
+@click.option('--train_dataset_len', default=100000)
+@click.option('--val_dataset_len', default=2000)
+@click.option('--max_model_len', default=1024)
+def run_prepare(train_dataset_save_path, val_dataset_save_path, model_type, train_dataset_len,
+                    val_dataset_len, max_model_len):
+    prepare_dataset(train_dataset_save_path, val_dataset_save_path, model_type, train_dataset_len,
+                    val_dataset_len, max_model_len)
