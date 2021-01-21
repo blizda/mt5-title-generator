@@ -12,11 +12,18 @@ def get_model_from_w_b_without_run(artifact_name='T5_model_tasks:latest'):
     return artifact.download()
 
 class ProcessMassge(object):
+
+    def __init__(self):
+        path = get_model_from_w_b_without_run()
+        model_path = glob.glob(os.path.join(path, '*.pt'))[0]
+        self.tokenizer = T5Tokenizer.from_pretrained('google/mt5-small')
+        self.onnx_model = OnnxT5(model_name_or_path="google/mt5-small", onnx_path="onnx_models", model_st_d=model_path)
+
     def on_post(self, req, resp):
         message = req.media.get("message")
         message = "напиши заголовок:  " + message
-        enc = tokenizer(message, truncation=True, return_tensors="pt")
-        tokens = onnx_model.generate(input_ids=enc['input_ids'],
+        enc = self.tokenizer(message, truncation=True, return_tensors="pt")
+        tokens = self.onnx_model.generate(input_ids=enc['input_ids'],
                                      attention_mask=enc['attention_mask'],
                                      num_beams=2,
                                      no_repeat_ngram_size=2,
@@ -24,16 +31,12 @@ class ProcessMassge(object):
                                      max_length=100,
                                      early_stopping=True,
                                      use_cache=True)
-        result = tokenizer.batch_decode(tokens, skip_special_tokens=True)
+        result = self.tokenizer.batch_decode(tokens, skip_special_tokens=True)
 
         resp.body = json.dumps({"title": result[0]})
         resp.status = falcon.HTTP_200
         return resp
 
-path = get_model_from_w_b_without_run()
-model_path = glob.glob(os.path.join(path, '*.pt'))[0]
-tokenizer = T5Tokenizer.from_pretrained('google/mt5-small')
-onnx_model = OnnxT5(model_name_or_path="google/mt5-small", onnx_path="onnx_models", model_st_d=model_path)
 app = falcon.API()
 message_processor = ProcessMassge()
 app.add_route('/model', message_processor)
