@@ -62,9 +62,9 @@ def run_pipline(config_file, prepare_data, train, convert_models, generate_data_
               checkpoint_path, lr, gpus, precision, grad_accum_steps)
         logging.info('End training')
     if convert_models:
-        logging.info('Starting model converting')
+        logging.info('Starting models converting')
         convert(checkpoint_path, save_orig_torch_path)
-        logging.info('End model converting')
+        logging.info('End models converting')
     if generate_data_for_val:
         logging.info('Starting generation validation data')
         generate_data(val_dataset, save_orig_torch_path, save_generate_file_path, model_type, beam, device)
