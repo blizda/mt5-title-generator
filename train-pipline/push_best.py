@@ -24,11 +24,6 @@ def get_score_from_data(path):
                 return it[3]
 
 
-@click.command()
-@click.option('--path_to_generated_dataset_with_score', type=click.Path(exists=True), help='Path to dataset with score')
-@click.option('--models_path', type=click.Path(exists=True), help='Path to models directory')
-@click.option('--wand_projekt', default='mt-t5-ria-news')
-@click.option('--dataset_len', default=100000)
 def push_best_model(path_to_generated_dataset_with_score, models_path, wand_projekt, dataset_len):
     score_name_dict = {}
     path_to_pt = models_path + '/'
@@ -43,5 +38,14 @@ def push_best_model(path_to_generated_dataset_with_score, models_path, wand_proj
                artifact_name='T5_model_tasks',
                metadata={"cos_score": max_value, "train_dataset_len": dataset_len})
 
+
+@click.command()
+@click.option('--path_to_generated_dataset_with_score', type=click.Path(exists=True), help='Path to dataset with score')
+@click.option('--models_path', type=click.Path(exists=True), help='Path to models directory')
+@click.option('--wand_projekt', default='mt-t5-ria-news')
+@click.option('--dataset_len', default=100000)
+def run_push_best_model(path_to_generated_dataset_with_score, models_path, wand_projekt, dataset_len):
+    push_best_model(path_to_generated_dataset_with_score, models_path, wand_projekt, dataset_len)
+
 if __name__ == '__main__':
-    push_best_model()
+    run_push_best_model()

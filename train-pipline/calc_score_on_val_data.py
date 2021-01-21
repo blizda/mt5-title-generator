@@ -46,10 +46,7 @@ def iterate_over_dataset(path, model, output):
         sim = cosine_similarity(vectors_gt, vectors_gen)
         generate_eval_data(output, temp_dat_text, temp_dat_gt, temp_dat_gen, sim)
 
-@click.command()
-@click.option('--generated_dataset_path', type=click.Path(exists=True), help='Path to generated dataset')
-@click.option('--dataset_to_save_with_score', type=click.Path(exists=True), help='Path to directory for '
-                                                                                 'saving dataset with score')
+
 def generate_score(generated_dataset_path, dataset_to_save_with_score):
     path = get_model_from_w_b_without_run()
     model = ElmoModel()
@@ -58,6 +55,13 @@ def generate_score(generated_dataset_path, dataset_to_save_with_score):
         name = os.path.basename(data_path)
         iterate_over_dataset(data_path, model, dataset_to_save_with_score + '/' + name)
 
+@click.command()
+@click.option('--generated_dataset_path', type=click.Path(exists=True), help='Path to generated dataset')
+@click.option('--dataset_to_save_with_score', type=click.Path(exists=True), help='Path to directory for '
+                                                                                 'saving dataset with score')
+def run_generate_score(generated_dataset_path, dataset_to_save_with_score):
+    generate_score(generated_dataset_path, dataset_to_save_with_score)
+
 
 if __name__ == '__main__':
-    generate_score()
+    run_generate_score()

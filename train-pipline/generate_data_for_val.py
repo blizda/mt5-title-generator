@@ -55,6 +55,17 @@ def generate_eval_data(result_path, dataset, gt_rs, result_dataset):
             writer.writerow(result_list)
 
 
+def generate_data(val_dataset, models_path, save_generate_file_path, model_type, beam, device):
+    tokenizer = T5Tokenizer.from_pretrained(model_type)
+    dataset_l, gt_r = load_dataset(val_dataset)
+    for vanila_path in glob.glob(models_path + '/*.pt'):
+        name = os.path.basename(vanila_path)[:7] + '.tsv'
+        model = load_model(vanila_path, device=device)
+        result_dataset = generate_result(dataset_l, model, tokenizer, device=device, beam=beam)
+        generate_eval_data(save_generate_file_path + name, dataset_l, gt_r,
+                           result_dataset)
+
+
 @click.command()
 @click.option('--val_dataset', type=click.Path(exists=True), help='Path to val dataset')
 @click.option('--models_path', type=click.Path(exists=True), help='Path to models directory')
@@ -62,16 +73,8 @@ def generate_eval_data(result_path, dataset, gt_rs, result_dataset):
 @click.option('--model_type', default='google/mt5-small')
 @click.option('--beam', default=2)
 @click.option('--device', default='cpu')
-def generate_data(val_dataset, models_path, save_generate_file_path, model_type, beam, device):
-    tokenizer = T5Tokenizer.from_pretrained(model_type)
-    dataset_l, gt_r = load_dataset(val_dataset)
-    for vanila_path in glob.glob(models_path + '/*.pt'):
-        name = os.path.basename(vanila_path)[:7] + '.tsv'
-        model = load_model(vanila_path, device=device)
-        print('generating results for: ' + name)
-        result_dataset = generate_result(dataset_l, model, tokenizer, device=device, beam=beam)
-        generate_eval_data(save_generate_file_path + name, dataset_l, gt_r,
-                           result_dataset)
+def run_generate_data(val_dataset, models_path, save_generate_file_path, model_type, beam, device):
+    generate_data(val_dataset, models_path, save_generate_file_path, model_type, beam, device)
 
 if __name__ == '__main__':
-    generate_data()
+    run_generate_data()
