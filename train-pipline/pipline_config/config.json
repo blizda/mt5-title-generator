@@ -7,6 +7,7 @@
   "push_best": true,
   "train_dataset_len": 100,
   "val_dataset_len": 10,
+  "max_model_len": 1024,
   "train_dataset": "generated_data/train_and_val_dataset/train.tsv",
   "val_dataset": "generated_data/train_and_val_dataset/val.tsv",
   "model_type": "google/mt5-small",
