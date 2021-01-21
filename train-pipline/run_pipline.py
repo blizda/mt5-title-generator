@@ -7,10 +7,15 @@ from generate_data_for_val import generate_data
 from calc_score_on_val_data import generate_score
 from push_best import push_best_model
 import logging
+import sys
 
-
-logging.basicConfig(level=logging.INFO, filename='train.log',
-                    filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 @click.command(cls=CommandConfigFile('config_file'))

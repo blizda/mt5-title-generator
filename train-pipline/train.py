@@ -11,6 +11,13 @@ def train_model(train_dataset, val_dataset, model_type, epochs, batch_size, wand
     train_dataset = TSVDataset(train_dataset)
     val_dataset = TSVDataset(val_dataset)
     wandb_logger = WandbLogger(project=wand_projekt, tags=['mT5', 'titles'])
+    wandb_logger.log_hyperparams({
+        "max_epoch": epochs,
+        "batch_size": batch_size,
+        "grad_accum_steps": grad_accum_steps,
+        "precision": precision,
+        "lr": lr
+    })
     lt_model = LtT5model(mtype=model_type, lr=lr)
     checkpoint_callback = ModelCheckpoint(monitor='avg_val_loss', filepath=checkpoint_path + '/',
                                           save_top_k=epochs)

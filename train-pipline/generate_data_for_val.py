@@ -62,7 +62,7 @@ def generate_data(val_dataset, models_path, save_generate_file_path, model_type,
         name = os.path.basename(vanila_path)[:7] + '.tsv'
         model = load_model(vanila_path, device=device)
         result_dataset = generate_result(dataset_l, model, tokenizer, device=device, beam=beam)
-        generate_eval_data(save_generate_file_path + name, dataset_l, gt_r,
+        generate_eval_data(save_generate_file_path + '/' + name, dataset_l, gt_r,
                            result_dataset)
 
 
