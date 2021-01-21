@@ -10,7 +10,7 @@ def convert(checkpoint_path, save_orig_torch_path):
     for lt_file in glob.glob(checkpoint_path + '/*.ckpt'):
         name = os.path.basename(lt_file)[:7] + '.pt'
         model = lt_model.load_from_checkpoint(lt_file)
-        torch.save(model.model.state_dict(), save_orig_torch_path + name)
+        torch.save(model.model.state_dict(), save_orig_torch_path + '/' + name)
 
 
 @click.command()

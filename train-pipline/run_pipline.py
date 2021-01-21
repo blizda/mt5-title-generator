@@ -6,6 +6,12 @@ from convert_models import convert
 from generate_data_for_val import generate_data
 from calc_score_on_val_data import generate_score
 from push_best import push_best_model
+import logging
+
+
+logging.basicConfig(level=logging.INFO, filename='train.log',
+                    filemode='w', format='%(asctime)s - %(levelname)s - %(message)s')
+
 
 @click.command(cls=CommandConfigFile('config_file'))
 @click.option("--config_file", type=click.Path())
@@ -41,19 +47,32 @@ def run_pipline(config_file, prepare_data, train, convert_models, generate_data_
                 lr, gpus, precision, grad_accum_steps, save_orig_torch_path, save_generate_file_path,
                 beam, device, dataset_to_save_with_score):
     if prepare_data:
+        logging.info('Strating dataset processing')
         prepare_dataset(train_dataset, val_dataset, model_type,
                         train_dataset_len, val_dataset_len, max_model_len)
+        logging.info('End dataset processing')
     if train:
+        logging.info('Strating training')
         train_model(train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt,
               checkpoint_path, lr, gpus, precision, grad_accum_steps)
+        logging.info('End training')
     if convert_models:
+        logging.info('Starting model converting')
         convert(checkpoint_path, save_orig_torch_path)
+        logging.info('End model converting')
     if generate_data_for_val:
+        logging.info('Starting generation validation data')
         generate_data(val_dataset, save_orig_torch_path, save_generate_file_path, model_type, beam, device)
+        logging.info('End generation validation data')
     if calc_score_on_val_data:
+        logging.info('Starting calculating score')
         generate_score(save_generate_file_path, dataset_to_save_with_score)
+        logging.info('End calculating score')
     if push_best:
+        logging.info('Starting uploading best model to W&B')
         push_best_model(dataset_to_save_with_score, save_orig_torch_path, wand_projekt, train_dataset_len)
+        logging.info('Model uploaded')
+    logging.info('Pipline finished')
 
 if __name__ == '__main__':
     run_pipline()
