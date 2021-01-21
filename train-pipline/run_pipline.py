@@ -15,29 +15,45 @@ from push_best import push_best_model
 @click.option("--generate_data_for_val")
 @click.option("--calc_score_on_val_data")
 @click.option("--push_best")
+@click.option('--train_dataset_len')
+@click.option('--val_dataset_len')
+@click.option('--max_model_len')
 @click.option('--train_dataset', type=click.Path(exists=True), help='Path to train dataset')
 @click.option('--val_dataset', type=click.Path(exists=True), help='Path to val dataset')
-@click.option('--model_type', default='google/mt5-small')
-@click.option('--epochs', default=10)
-@click.option('--batch_size', default=1)
-@click.option('--wand_projekt', default='mt-t5-ria-news')
-@click.option('--checkpoint_path', type=click.Path(exists=True), default='mt5_chkpnt')
-@click.option('--lr', default=1e-4)
-@click.option('--gpus', default=-1)
-@click.option('--precision', default=32)
-@click.option('--grad_accum_steps', default=32)
-@click.option('--save_orig_torch_path', type=click.Path(exists=True), default='mt5_chkpnt_orig_torch')
+@click.option('--model_type')
+@click.option('--epochs')
+@click.option('--batch_size')
+@click.option('--wand_projekt')
+@click.option('--checkpoint_path', type=click.Path(exists=True))
+@click.option('--lr')
+@click.option('--gpus')
+@click.option('--precision')
+@click.option('--grad_accum_steps')
+@click.option('--save_orig_torch_path', type=click.Path(exists=True))
 @click.option('--save_generate_file_path', type=click.Path(exists=True), help='Path to generated files directory')
-@click.option('--beam', default=2)
-@click.option('--device', default='cpu')
+@click.option('--beam')
+@click.option('--device')
 @click.option('--dataset_to_save_with_score', type=click.Path(exists=True), help='Path to directory for '
                                                                                  'saving dataset with score')
-@click.option('--elmo_path', type=click.Path(exists=True), help='Path to generated files directory')
 def run_pipline(config_file, prepare_data, train, convert_models, generate_data_for_val, calc_score_on_val_data,
-                push_best, train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt, checkpoint_path,
-                lr, gpus, precision, grad_accum_steps, save_orig_torch_path, beam, device, dataset_to_save_with_score):
-    print(config_file)
-    print(prepare_data)
+                push_best, train_dataset_len, val_dataset_len, max_model_len,
+                train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt, checkpoint_path,
+                lr, gpus, precision, grad_accum_steps, save_orig_torch_path, save_generate_file_path,
+                beam, device, dataset_to_save_with_score):
+    if prepare_data:
+        prepare_dataset(train_dataset, val_dataset, model_type, train_dataset_len,
+                        val_dataset_len, max_model_len)
+    if train:
+        train(train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt,
+              checkpoint_path, lr, gpus, precision, grad_accum_steps)
+    if convert_models:
+        convert(checkpoint_path, save_orig_torch_path)
+    if generate_data_for_val:
+        generate_data(val_dataset, save_orig_torch_path, save_generate_file_path, model_type, beam, device)
+    if calc_score_on_val_data:
+        generate_score(save_generate_file_path, dataset_to_save_with_score)
+    if push_best:
+        push_best_model(dataset_to_save_with_score, save_orig_torch_path, wand_projekt, train_dataset_len)
 
 if __name__ == '__main__':
     run_pipline()

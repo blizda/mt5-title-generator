@@ -3,7 +3,14 @@ import re
 import csv
 from transformers import T5Tokenizer
 import click
+import wandb
+import glob
+import os
 
+def get_dataset_from_w_b_without_run(artifact_name='ria_dataset:latest'):
+    api = wandb.Api()
+    artifact = api.artifact('blizd/mt-t5-ria-news/'+artifact_name, type='dataset')
+    return artifact.download()
 
 def cleaning_text(str_in):
     new_string = re.sub('<\/?\w+\W?\/?>', '', str_in)
@@ -29,29 +36,27 @@ def write_to_dataset(json_string, writer, tokenizer, k, max_model_len=1024):
     return k
 
 @click.command()
-@click.option('--train_dataset', type=click.Path(exists=True), help='Path to train dataset')
-@click.option('--val_dataset', type=click.Path(exists=True), help='Path to val dataset')
+@click.option('--train_dataset_save_path', type=click.Path(exists=True), help='Path to save train dataset')
+@click.option('--val_dataset_save_path', type=click.Path(exists=True), help='Path save to val dataset')
 @click.option('--model_type', default='google/mt5-small')
-@click.option('--epochs', default=10)
-@click.option('--batch_size', default=1)
-@click.option('--wand_projekt', default='mt-t5-ria-news')
-@click.option('--checkpoint_path', type=click.Path(exists=True), default='mt5_chkpnt')
-@click.option('--lr', default=1e-4)
-@click.option('--gpus', default=-1)
-@click.option('--precision', default=32)
-@click.option('--grad_accum_steps', default=32)
-tokenizer = T5Tokenizer.from_pretrained('google/mt5-small')
-train_len = 100000
-val_len = 2000
-max_model_len = 1024
-k = 0
-with open('/content/drive/My Drive/ria_dataset/processed-ria.json') as file, open('/content/drive/My Drive/ria_dataset/ria_train_100k.tsv', 'w') as file_train, open('/content/drive/My Drive/ria_dataset/ria_val_2k.tsv', 'w') as file_val:
-    tsv_train = csv.writer(file_train, delimiter='\t')
-    tsv_val = csv.writer(file_val, delimiter='\t')
-    for it in file:
-      if k < train_len:
-        k = write_to_dataset(it, tsv_train, tokenizer, k, max_model_len=max_model_len)
-      elif k >= train_len and k < train_len + val_len:
-        k = write_to_dataset(it, tsv_train, tokenizer, k, max_model_len=max_model_len)
-      else:
-        break
+@click.option('--train_dataset_len', default=100000)
+@click.option('--val_dataset_len', default=2000)
+@click.option('--max_model_len', default=1024)
+def prepare_dataset(train_dataset_save_path, val_dataset_save_path, model_type, train_dataset_len,
+                    val_dataset_len, max_model_len):
+    dataset = get_dataset_from_w_b_without_run
+    dataset = glob.glob(os.path.join(dataset, '*.json'))[0]
+    tokenizer = T5Tokenizer.from_pretrained(model_type)
+    k = 0
+    with open(dataset) as file, open(
+            train_dataset_save_path, 'w') as file_train, open(
+            val_dataset_save_path, 'w') as file_val:
+        tsv_train = csv.writer(file_train, delimiter='\t')
+        tsv_val = csv.writer(file_val, delimiter='\t')
+        for it in file:
+            if k < train_dataset_len:
+                k = write_to_dataset(it, tsv_train, tokenizer, k, max_model_len=max_model_len)
+            elif k >= train_dataset_len and k < train_dataset_len + val_dataset_len:
+                k = write_to_dataset(it, tsv_val, tokenizer, k, max_model_len=max_model_len)
+            else:
+                break

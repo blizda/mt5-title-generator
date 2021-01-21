@@ -22,7 +22,7 @@ class ProcessMassge(object):
     def on_post(self, req, resp):
         message = req.media.get("message")
         message = "напиши заголовок:  " + message
-        enc = self.tokenizer(message, truncation=True, return_tensors="pt")
+        enc = self.tokenizer(message, max_length=1024, truncation=True, return_tensors="pt")
         tokens = self.onnx_model.generate(input_ids=enc['input_ids'],
                                      attention_mask=enc['attention_mask'],
                                      num_beams=2,

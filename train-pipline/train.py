@@ -19,7 +19,8 @@ import click
 @click.option('--gpus', default=-1)
 @click.option('--precision', default=32)
 @click.option('--grad_accum_steps', default=32)
-def train(train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt, checkpoint_path, lr, gpus, precision, grad_accum_steps):
+def train(train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt,
+          checkpoint_path, lr, gpus, precision, grad_accum_steps):
     train_dataset = TSVDataset(train_dataset)
     val_dataset = TSVDataset(val_dataset)
     wandb_logger = WandbLogger(project=wand_projekt, tags=['mT5', 'titles'])

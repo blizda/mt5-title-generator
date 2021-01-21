@@ -5,6 +5,13 @@ from simple_elmo import ElmoModel
 from sklearn.metrics.pairwise import cosine_similarity
 import statistics
 import click
+import wandb
+
+
+def get_model_from_w_b_without_run(artifact_name='elmo_model:latest'):
+    api = wandb.Api()
+    artifact = api.artifact('blizd/mt-t5-ria-news/'+artifact_name, type='model')
+    return artifact.download()
 
 
 def generate_eval_data(result_path, text, gt_rs, generated, score):
@@ -43,10 +50,10 @@ def iterate_over_dataset(path, model, output):
 @click.option('--generated_dataset_path', type=click.Path(exists=True), help='Path to generated dataset')
 @click.option('--dataset_to_save_with_score', type=click.Path(exists=True), help='Path to directory for '
                                                                                  'saving dataset with score')
-@click.option('--elmo_path', type=click.Path(exists=True), help='Path to generated files directory')
-def generate_score(generated_dataset_path, dataset_to_save_with_score, elmo_path):
+def generate_score(generated_dataset_path, dataset_to_save_with_score):
+    path = get_model_from_w_b_without_run()
     model = ElmoModel()
-    model.load(elmo_path, max_batch_size=128)
+    model.load(path, max_batch_size=32)
     for data_path in glob.glob(generated_dataset_path +'/*.tsv'):
         name = os.path.basename(data_path)
         iterate_over_dataset(data_path, model, dataset_to_save_with_score + '/' + name)
