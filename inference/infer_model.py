@@ -14,7 +14,19 @@ def get_model_from_w_b_without_run(artifact_name='T5_model_tasks:latest'):
 class ProcessMassge(object):
     def on_post(self, req, resp):
         message = req.media.get("message")
-        resp.body = json.dumps({"test": "answer"})
+        message = "напиши заголовок:  " + message
+        enc = tokenizer(message, truncation=True, return_tensors="pt")
+        tokens = onnx_model.generate(input_ids=enc['input_ids'],
+                                     attention_mask=enc['attention_mask'],
+                                     num_beams=2,
+                                     no_repeat_ngram_size=2,
+                                     min_length=3,
+                                     max_length=100,
+                                     early_stopping=True,
+                                     use_cache=True)
+        result = tokenizer.batch_decode(tokens, skip_special_tokens=True)
+
+        resp.body = json.dumps({"title": result[0]})
         resp.status = falcon.HTTP_200
         return resp
 
