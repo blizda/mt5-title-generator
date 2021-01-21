@@ -1,6 +1,6 @@
 import click
 from customise_click import CommandConfigFile
-from train import train
+from train import train_model
 from prepare_dataset import prepare_dataset
 from convert_models import convert
 from generate_data_for_val import generate_data
@@ -44,7 +44,7 @@ def run_pipline(config_file, prepare_data, train, convert_models, generate_data_
         prepare_dataset(train_dataset, val_dataset, model_type,
                         train_dataset_len, val_dataset_len, max_model_len)
     if train:
-        train(train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt,
+        train_model(train_dataset, val_dataset, model_type, epochs, batch_size, wand_projekt,
               checkpoint_path, lr, gpus, precision, grad_accum_steps)
     if convert_models:
         convert(checkpoint_path, save_orig_torch_path)
