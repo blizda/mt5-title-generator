@@ -16,7 +16,7 @@
   "wand_projekt": "mt-t5-ria-news",
   "checkpoint_path": "generated_data/mt5_chkpnt",
   "lr": 1e-4,
-  "gpus": -1,
+  "gpus": "0",
   "precision": 32,
   "grad_accum_steps": 32,
   "save_orig_torch_path": "generated_data/mt5_chkpnt_orig_torch",
