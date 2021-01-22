@@ -11,7 +11,7 @@
   "train_dataset": "generated_data/train_and_val_dataset/train.tsv",
   "val_dataset": "generated_data/train_and_val_dataset/val.tsv",
   "model_type": "google/mt5-small",
-  "epochs": 3,
+  "epochs": 4,
   "batch_size": 1,
   "wand_projekt": "mt-t5-ria-news",
   "checkpoint_path": "generated_data/mt5_chkpnt",
